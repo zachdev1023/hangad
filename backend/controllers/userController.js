@@ -38,9 +38,10 @@ const addUser = asyncHandler(async (req, res) => {
 
   if (user) {
     res.status(201).json({
-      __id: user.id,
+      _id: user.id,
       email: user.email,
       name: user.name,
+      token: generateToken(user._id),
     });
   } else {
     res.status(400);
@@ -51,22 +52,23 @@ const addUser = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-    const {email, password} = req.body
-    
-    //Check User
-    const user = await User.findOne({email})
+  const { email, password } = req.body;
 
-    if (user && (await bcrypt.compare(password, user.password))) {
-        res.json({
-            __id: user.id,
-            name: user.name,
-            email: user.email,
-        })
-    } else {
-        res.status(400)
-        throw new Error('Invalid Credentials')
-    }
-})
+  //Check User
+  const user = await User.findOne({ email });
+
+  if (user && (await bcrypt.compare(password, user.password))) {
+    res.json({
+      _id: user.id,
+      name: user.name,
+      email: user.email,
+      token: generateToken(user._id)
+    });
+  } else {
+    res.status(400);
+    throw new Error("Invalid Credentials");
+  }
+});
 
 const deleteUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
@@ -96,10 +98,15 @@ const updateUser = asyncHandler(async (req, res) => {
   res.status(200).json(updatedUser);
 });
 
+//Generate JWT
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
+};
+
 module.exports = {
   getUsers,
   addUser,
   deleteUser,
   updateUser,
-  loginUser
+  loginUser,
 };
