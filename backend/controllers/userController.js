@@ -3,6 +3,16 @@ const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
+const viewProfile = asyncHandler(async (req, res) => {
+  const { _id, name, email} = await User.findById(req.user.id)
+
+  res.status(200).json({
+      id: _id,
+      name,
+      email
+  })
+});
+
 const getUsers = asyncHandler(async (req, res) => {
   const users = await User.find();
 
@@ -22,7 +32,7 @@ const addUser = asyncHandler(async (req, res) => {
   //Check email if its already taken
   if (userExists) {
     res.status(400);
-    throw new Error("Email already taken");
+    throw new Error("Email is already taken");
   }
 
   //Hash Password to bcrypt
@@ -62,7 +72,7 @@ const loginUser = asyncHandler(async (req, res) => {
       _id: user.id,
       name: user.name,
       email: user.email,
-      token: generateToken(user._id)
+      token: generateToken(user._id),
     });
   } else {
     res.status(400);
@@ -109,4 +119,5 @@ module.exports = {
   deleteUser,
   updateUser,
   loginUser,
+  viewProfile,
 };
