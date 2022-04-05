@@ -1,0 +1,31 @@
+.navbar {
+    display: flex;
+    border-bottom: 1px solid #292929;
+    background-color: #f1f1f1;
+    margin-bottom: 2rem;
+}
+
+ul {
+    list-style: none;
+    display: flex;
+    margin-bottom: 0
+}
+
+li, a {
+    padding: 1rem;
+}
+
+a {
+    text-decoration: none;
+    color: #292929
+}
+
+a:hover {
+    color: #f1f1f1;
+    background-color: #292929;
+    border-radius: 2rem;
+}
+
+.brand {
+    margin-left: 1rem;
+}
